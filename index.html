@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Training to War — Python OOP Soldier Training Simulator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.26.1/full/pyodide.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="min-h-screen p-3 md:p-5 flex flex-col justify-between overflow-x-hidden">
+
+    <!-- =====================================================
+       ANIMATED OPENING SPLASH SCREEN
+       ===================================================== -->
+    <div id="splash-screen">
+        <div
+            class="max-w-xl w-full mx-4 tac-panel rounded-3xl p-8 text-center border border-amber-500/30 shadow-2xl relative overflow-hidden">
+            <div class="flex justify-center mb-5">
+                <div class="radar-circle flex items-center justify-center">
+                    <div class="radar-sweep"></div>
+                    <span class="text-4xl relative z-10">🎖️</span>
+                </div>
+            </div>
+            <div
+                class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-bold uppercase tracking-widest mb-3">
+                ⚔️ Tactical OOP & DSA Command Simulator
+            </div>
+            <h1 class="text-3xl md:text-5xl font-extrabold text-white tracking-tight mb-2">
+                TRAINING TO WAR
+            </h1>
+            <p class="text-sm md:text-base text-amber-300 font-semibold mb-4">
+                A game with Python OOP implementation, by Ashley Castillo
+            </p>
+            <p class="text-xs text-slate-300 leading-relaxed max-w-md mx-auto mb-6">
+                Recruit from <b class="text-white">15 specialized soldier subclasses</b>, train and promote your platoon
+                to <b class="text-amber-300">Elite Veteran</b> status for scaled War Funds, and execute live <b
+                    class="text-emerald-300">Python Object-Oriented Programming & Data Structures</b> in real time.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                <button onclick="enterCommandCenter()"
+                    class="px-6 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-extrabold text-sm shadow-lg shadow-amber-500/25 flex items-center justify-center gap-2">
+                    🚀 Enter Command Center
+                </button>
+                <button onclick="enterCommandCenter(); toggleGuideModal(true);"
+                    class="px-5 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-slate-100 font-bold text-sm flex items-center justify-center gap-2">
+                    📘 Read Field Manual (How to Play)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================
+       HOW TO PLAY / FIELD MANUAL MODAL
+       ===================================================== -->
+    <div id="guide-modal"
+        class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div
+            class="tac-panel max-w-4xl w-full rounded-2xl border border-amber-500/40 p-6 max-h-[90vh] overflow-y-auto space-y-5">
+            <div class="flex items-center justify-between border-b border-slate-700 pb-3">
+                <div class="flex items-center gap-2.5">
+                    <span class="text-2xl">📘</span>
+                    <div>
+                        <h2 class="text-xl font-extrabold text-white">FIELD MANUAL — HOW TO PLAY "TRAINING TO WAR"</h2>
+                        <p class="text-xs text-amber-300">Created by Ashley Castillo • Complete Gameplay, Economy &
+                            Python OOP Guide</p>
+                    </div>
+                </div>
+                <button onclick="toggleGuideModal(false)"
+                    class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold">✕
+                    Close Guide</button>
+            </div>
+
+            <!-- 3-Step Quick Start -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+                <div class="tac-subcard p-4 rounded-xl border-l-4 border-l-amber-500">
+                    <div class="font-bold text-amber-300 text-sm mb-1">1️⃣ Deploy Soldiers (15 Subclasses)</div>
+                    <p class="text-slate-300 leading-relaxed">Select a Soldier Subclass from the dropdown, keep <b>🪖
+                            Deploy Unit</b> active, and click any empty Sector <code>#0</code>–<code>#24</code>. Each
+                        unit costs War Funds + 1 Dog Tag and has its own OOP perk & Veteran payout!</p>
+                </div>
+                <div class="tac-subcard p-4 rounded-xl border-l-4 border-l-emerald-500">
+                    <div class="font-bold text-emerald-300 text-sm mb-1">2️⃣ Train, Resupply & Promote</div>
+                    <p class="text-slate-300 leading-relaxed">Use <b>🍖 Ration</b> (-5 Rations, -1 Ammo), <b>🎯
+                            Drill</b> (-4 Ammo, +15% XP), and <b>🩺 Medkit</b> (+30% HP, cures Injury/Critical). At 100%
+                        rank, deploy your <b>🏅 Elite Veteran</b> to earn <b>20c–60c</b> War Funds!</p>
+                </div>
+                <div class="tac-subcard p-4 rounded-xl border-l-4 border-l-sky-500">
+                    <div class="font-bold text-sky-300 text-sm mb-1">3️⃣ Explore Code & OOP Architecture</div>
+                    <p class="text-slate-300 leading-relaxed">Run live algorithms in the <b>DSA Tactical Deck</b> (BFS,
+                        DFS, Triage Sort, Dijkstra Convoy, BST Search) or open the <b>🐍 Code & Explanation</b> and
+                        <b>📖 OOP Architecture</b> tabs to study and run all 19 Python topics!
+                    </p>
+                </div>
+            </div>
+
+            <!-- 15 Selectable Soldier Classes -->
+            <div class="tac-subcard p-4 rounded-xl">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-amber-300 mb-2.5">🎖️ All 15 Selectable
+                    Soldier Subclasses (<code>class Subclass(Soldier)</code> — Cost → Elite Veteran Reward)</h3>
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 text-xs">
+                    <div class="bg-slate-900/90 p-2 rounded border border-slate-700/70">🎖️ <b>Rifleman</b> (5c → 20c)
+                    </div>
+                    <div class="bg-slate-900/90 p-2 rounded border border-slate-700/70">🎯 <b>Sniper</b> (10c → 30c)
+                    </div>
+                    <div class="bg-slate-900/90 p-2 rounded border border-slate-700/70">🩺 <b>Combat Medic</b> (8c →
+                        26c)</div>
+                    <div class="bg-slate-900/90 p-2 rounded border border-slate-700/70">🛡️ <b>Heavy Gunner</b> (12c →
+                        34c)</div>
+                    <div class="bg-slate-900/90 p-2 rounded border border-slate-700/70">💣 <b>Demolitionist</b> (14c →
+                        38c)</div>
+                    <div class="bg-slate-900/90 p-2 rounded border border-slate-700/70">🪂 <b>Paratrooper</b> (11c →
+                        32c)</div>
+                    <div class="bg-slate-900/90 p-2 rounded border border-slate-700/70">🚜 <b>Tank Commander</b> (20c →
+                        50c)</div>
+                    <div class="bg-slate-900/90 p-2 rounded border border-slate-700/70">💻 <b>Cyber Operator</b> (15c →
+                        40c)</div>
+                    <div class="bg-slate-900/90 p-2 rounded border border-slate-700/70">🛸 <b>Drone Pilot</b> (13c →
+                        36c)</div>
+                    <div class="bg-slate-900/90 p-2 rounded border border-slate-700/70">🗡️ <b>Scout Ranger</b> (9c →
+                        28c)</div>
+                    <div class="bg-slate-900/90 p-2 rounded border border-slate-700/70">🔭 <b>Artillery Spotter</b> (11c
+                        → 32c)</div>
+                    <div class="bg-slate-900/90 p-2 rounded border border-slate-700/70">🔥 <b>Flame Trooper</b> (16c →
+                        42c)</div>
+                    <div class="bg-slate-900/90 p-2 rounded border border-slate-700/70">🐕 <b>K9 Handler</b> (10c → 30c)
+                    </div>
+                    <div class="bg-slate-900/90 p-2 rounded border border-slate-700/70">📡 <b>Signal Corps</b> (7c →
+                        24c)</div>
+                    <div class="bg-slate-900/90 p-2 rounded border border-slate-700/70">⚡ <b>Special Forces</b> (25c →
+                        60c)</div>
+                </div>
+            </div>
+
+            <div class="flex justify-end">
+                <button onclick="toggleGuideModal(false)"
+                    class="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs">Got
+                    It — Return to Command Center</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================
+       TOP COMMAND HEADER
+       ===================================================== -->
+    <header
+        class="w-full max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4 pb-3 border-b border-slate-800">
+        <div class="flex items-center gap-3">
+            <div
+                class="w-11 h-11 rounded-xl bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center shadow-lg shadow-amber-500/20 text-2xl border border-amber-300/40">
+                🎖️</div>
+            <div>
+                <div class="flex items-center gap-2 flex-wrap">
+                    <h1 class="text-xl md:text-2xl font-extrabold tracking-tight text-white">TRAINING TO WAR</h1>
+                    <span id="version-badge"
+                        class="text-[10px] font-bold uppercase tracking-widest text-amber-300 bg-amber-950/70 border border-amber-500/40 px-2.5 py-0.5 rounded-full"></span>
+                </div>
+                <p class="text-xs text-slate-400 font-medium">A game with Python OOP implementation, by <b
+                        class="text-amber-300">Ashley Castillo</b></p>
+            </div>
+        </div>
+
+        <div class="flex items-center flex-wrap gap-2">
+            <button onclick="toggleGuideModal(true)"
+                class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-amber-500/40 text-amber-300 text-xs font-bold flex items-center gap-1.5">
+                📘 How to Play
+            </button>
+            <button onclick="showSplashScreen()"
+                class="px-3 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 text-xs font-semibold">
+                🎬 Title Screen
+            </button>
+            <div class="tac-panel px-3.5 py-1.5 rounded-xl flex flex-col items-end">
+                <span class="text-[9px] text-slate-400 uppercase tracking-widest font-bold">📅 CAMPAIGN DAY</span>
+                <span class="text-base font-extrabold text-white" id="day-counter">1</span>
+            </div>
+            <div class="tac-panel px-3.5 py-1.5 rounded-xl flex flex-col items-end">
+                <span class="text-[9px] text-emerald-400 uppercase tracking-widest font-bold">🛡️ READINESS</span>
+                <span class="text-base font-extrabold text-emerald-400" id="stewardship-counter">0%</span>
+            </div>
+            <div class="tac-panel px-3.5 py-1.5 rounded-xl flex flex-col items-end">
+                <span class="text-[9px] text-amber-400 uppercase tracking-widest font-bold">💰 WAR FUNDS</span>
+                <span class="text-base font-extrabold text-amber-400" id="coins-text">60c</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- =====================================================
+       MAIN 3-COLUMN TACTICAL WORKSPACE
+       ===================================================== -->
+    <main class="w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-4 flex-grow">
+
+        <!-- LEFT COLUMN: BASE LOGISTICS + SOLDIER INSPECTOR + DRILL SERGEANT -->
+        <section class="lg:col-span-3 flex flex-col gap-4">
+            <!-- Base Logistics (`BaseEconomy`) -->
+            <div class="tac-panel rounded-2xl p-4">
+                <h2
+                    class="text-sm font-bold text-white border-b border-slate-800 pb-2 mb-3 flex items-center justify-between">
+                    <span>📦 Base Logistics (`BaseEconomy`)</span>
+                    <span class="text-[10px] code-font text-amber-400">Topic 3</span>
+                </h2>
+                <div class="space-y-3">
+                    <div>
+                        <div class="flex justify-between text-xs font-semibold mb-1">
+                            <span class="text-sky-300">🍖 MRE Rations (Stamina)</span>
+                            <span id="water-text" class="code-font text-[11px] text-slate-200">180 / 200</span>
+                        </div>
+                        <div class="w-full bg-slate-950 h-2 rounded-full overflow-hidden">
+                            <div id="water-bar"
+                                class="bg-gradient-to-r from-sky-500 to-cyan-400 h-full rounded-full transition-all"
+                                style="width: 90%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-xs font-semibold mb-1">
+                            <span class="text-emerald-300">🎖️ Recruit Dog Tags</span>
+                            <span id="seeds-text" class="code-font text-[11px] text-slate-200">45 / 100</span>
+                        </div>
+                        <div class="w-full bg-slate-950 h-2 rounded-full overflow-hidden">
+                            <div id="seeds-bar"
+                                class="bg-gradient-to-r from-emerald-500 to-teal-400 h-full rounded-full transition-all"
+                                style="width: 45%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-xs font-semibold mb-1">
+                            <span class="text-amber-300">🔫 Munitions & Fuel</span>
+                            <span id="energy-text" class="code-font text-[11px] text-slate-200">110 / 120</span>
+                        </div>
+                        <div class="w-full bg-slate-950 h-2 rounded-full overflow-hidden">
+                            <div id="energy-bar"
+                                class="bg-gradient-to-r from-amber-500 to-yellow-400 h-full rounded-full transition-all"
+                                style="width: 91%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-xs font-semibold mb-1">
+                            <span class="text-rose-300">🔥 Platoon Morale</span>
+                            <span id="hope-text" class="code-font text-[11px] text-slate-200">80 / 100</span>
+                        </div>
+                        <div class="w-full bg-slate-950 h-2 rounded-full overflow-hidden">
+                            <div id="hope-bar"
+                                class="bg-gradient-to-r from-rose-500 to-orange-400 h-full rounded-full transition-all"
+                                style="width: 80%"></div>
+                        </div>
+                    </div>
+                </div>
+                <button onclick="quartermasterResupply()"
+                    class="mt-3 w-full py-2 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-amber-500/40 text-amber-300 text-xs font-bold flex items-center justify-center gap-1.5 transition"
+                    title="Calls BaseEconomy.resupply() to replenish Rations, Ammo & Dog Tags">
+                    📦 Quartermaster Resupply (-10c)
+                </button>
+            </div>
+
+            <!-- Selected Soldier Inspector (OOP Instance State) -->
+            <div class="tac-panel rounded-2xl p-4">
+                <h3
+                    class="font-bold text-white mb-2 flex items-center justify-between text-sm border-b border-slate-800 pb-2">
+                    <span>🔍 Soldier OOP Inspector</span>
+                    <span class="text-[10px] code-font text-amber-400">self.__dict__</span>
+                </h3>
+                <div id="plant-dashboard"></div>
+            </div>
+
+            <!-- Drill Sergeant Advisor -->
+            <div class="tac-panel rounded-2xl p-4 flex-1">
+                <h3
+                    class="font-bold text-white mb-2 flex items-center justify-between text-sm border-b border-slate-800 pb-2">
+                    <span>📢 Drill Sergeant Alerts</span>
+                    <span class="text-[10px] text-emerald-400 font-semibold">Live Triage</span>
+                </h3>
+                <div id="care-assistant" class="space-y-2 text-xs"></div>
+            </div>
+        </section>
+
+        <!-- CENTER COLUMN: WORKSPACE TABS (BARRACKS GAME | CODE & EXPLANATION | OOP ARCHITECTURE) -->
+        <section class="lg:col-span-6 flex flex-col gap-3">
+            <!-- Navigation Tabs + Topic Selector Bar -->
+            <div class="tac-panel p-2.5 rounded-2xl flex flex-col gap-2">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                    <div class="flex bg-slate-950 p-1 rounded-xl border border-slate-800 w-full sm:w-auto">
+                        <button onclick="switchTab('game')" id="tab-game"
+                            class="tab-btn active flex-1 sm:flex-initial px-3.5 py-1.5 rounded-lg text-xs font-bold">🎮
+                            Barracks Grid</button>
+                        <button onclick="switchTab('code')" id="tab-code"
+                            class="tab-btn flex-1 sm:flex-initial px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-300 hover:text-white">🐍
+                            Code & Explanation</button>
+                        <button onclick="switchTab('explain')" id="tab-explain"
+                            class="tab-btn flex-1 sm:flex-initial px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-300 hover:text-white">📖
+                            OOP Architecture</button>
+                    </div>
+                    <div class="flex items-center gap-1 flex-1 min-w-[230px]">
+                        <button onclick="stepTopic(-1)"
+                            class="px-2 py-1.5 rounded-lg bg-slate-950 hover:bg-slate-800 border border-slate-700 text-amber-300 text-xs font-bold"
+                            title="Previous Topic">◀</button>
+                        <select id="topic-selector" onchange="loadTopic(this.value)"
+                            class="w-full bg-slate-950 border border-slate-700 text-slate-100 rounded-xl px-2.5 py-1.5 text-xs font-semibold"></select>
+                        <button onclick="stepTopic(1)"
+                            class="px-2 py-1.5 rounded-lg bg-slate-950 hover:bg-slate-800 border border-slate-700 text-amber-300 text-xs font-bold"
+                            title="Next Topic">▶</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- =====================================================
+               TAB 1: INTERACTIVE BARRACKS TRAINING GRID
+               ===================================================== -->
+            <div id="view-game" class="tac-panel rounded-2xl p-4 md:p-5 flex flex-col gap-3.5">
+
+                <!-- STEP 1: CHOOSE SOLDIER CLASS & COMMAND ACTION -->
+                <div class="tac-subcard rounded-xl p-3 space-y-2.5">
+                    <div class="flex items-center justify-between flex-wrap gap-2">
+                        <div class="flex items-center gap-2">
+                            <span class="step-badge">STEP 1</span>
+                            <span class="text-xs font-bold text-white">Choose Soldier Subclass (15 Units) & Command
+                                Method</span>
+                        </div>
+                        <div class="flex items-center gap-2 flex-1 sm:flex-initial justify-end">
+                            <span class="text-xs text-amber-300 font-semibold whitespace-nowrap">🎖️ Recruit:</span>
+                            <select id="crop-selector"
+                                class="bg-slate-950 border border-amber-500/50 text-white text-xs font-bold rounded-xl px-2.5 py-1.5 max-w-[240px] w-full"></select>
+                        </div>
+                    </div>
+
+                    <!-- 5 OOP COMMAND METHODS TOOLBAR -->
+                    <div class="grid grid-cols-2 sm:grid-cols-5 gap-1.5 text-[11px] font-bold">
+                        <button onclick="setTool('plant')" id="tool-plant"
+                            class="tool-btn py-2 px-2 rounded-lg border border-slate-700 bg-slate-900 text-slate-200 hover:border-amber-400 tool-btn-active"
+                            title="Instantiate selected Soldier subclass on an empty sector">🪖 Deploy Unit</button>
+                        <button onclick="setTool('water')" id="tool-water"
+                            class="tool-btn py-2 px-2 rounded-lg border border-slate-700 bg-slate-900 text-sky-300 hover:border-sky-400"
+                            title="unit.issue_rations(): -5 Rations, -1 Ammo -> Restores 100% Stamina (+3c)">🍖 Ration
+                            (+3c)</button>
+                        <button onclick="setTool('trim')" id="tool-trim"
+                            class="tool-btn py-2 px-2 rounded-lg border border-slate-700 bg-slate-900 text-amber-300 hover:border-amber-400"
+                            title="unit.run_drill(): -4 Ammo -> +15% Rank XP & +4c">🎯 Drill (+4c)</button>
+                        <button onclick="setTool('pest')" id="tool-pest"
+                            class="tool-btn py-2 px-2 rounded-lg border border-slate-700 bg-slate-900 text-emerald-300 hover:border-emerald-400"
+                            title="unit.apply_medkit(): Cures Injury & Critical HP, +30% HP (+5c)">🩺 Medkit
+                            (+5c)</button>
+                        <button onclick="setTool('remove')" id="tool-remove"
+                            class="tool-btn py-2 px-2 rounded-lg border border-slate-700 bg-slate-900 text-rose-300 hover:border-rose-400 col-span-2 sm:col-span-1"
+                            title="Deploy Elite Veteran for +20c to +60c War Funds, or reassign trainee">🏅 Deploy /
+                            Clear</button>
+                    </div>
+                </div>
+
+                <!-- STEP 2: 5x5 BARRACKS GRID -->
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center gap-2">
+                            <span class="step-badge">STEP 2</span>
+                            <h2 class="text-xs md:text-sm font-bold text-white">Click Any Sector Tile
+                                (<code>barracks_matrix[r][c]</code>) to Execute Method</h2>
+                        </div>
+                        <span class="text-[10px] code-font text-slate-400">5×5 2D Matrix (Topic 4)</span>
+                    </div>
+                    <div id="grid-wrap">
+                        <div id="garden-grid"></div>
+                        <div id="weather-layer"></div>
+                    </div>
+                </div>
+
+                <!-- STEP 3: PYTHON DSA & OOP TACTICAL OPERATIONS DECK -->
+                <div class="tac-subcard rounded-xl p-3 space-y-2.5 border border-amber-500/25">
+                    <div class="flex items-center justify-between flex-wrap gap-2">
+                        <div class="flex items-center gap-2">
+                            <span class="step-badge">STEP 3</span>
+                            <span class="text-xs font-bold text-white">Live Python OOP & DSA Tactical Operations</span>
+                        </div>
+                        <div class="flex gap-1.5">
+                            <button id="tv-pick-btn" onclick="toggleTvPickStart()"
+                                class="px-2.5 py-1 rounded-lg border border-slate-700 bg-slate-900 text-[10px] font-bold text-amber-300 hover:border-amber-400">📍
+                                HQ Start (#0)</button>
+                            <button onclick="resetTraversal()"
+                                class="px-2.5 py-1 rounded-lg border border-slate-700 bg-slate-900 text-[10px] font-bold text-slate-300 hover:border-slate-500">↺
+                                Clear Radar</button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5 text-[11px] font-bold">
+                        <button onclick="runGameBFS()"
+                            class="py-2 px-2 rounded-lg border border-sky-500/40 bg-sky-950/40 text-sky-200 hover:bg-sky-900/60"
+                            title="Scans grid with BFS and auto-heals/feeds/drills all trainees">🌊 BFS Auto-Care
+                            (T8)</button>
+                        <button onclick="runGameDFS()"
+                            class="py-2 px-2 rounded-lg border border-amber-500/40 bg-amber-950/40 text-amber-200 hover:bg-amber-900/60"
+                            title="Explores deep corridors with DFS and auto-cares trainees">🕳️ DFS Auto-Care
+                            (T9)</button>
+                        <button onclick="runGameSort()"
+                            class="py-2 px-2 rounded-lg border border-emerald-500/40 bg-emerald-950/40 text-emerald-200 hover:bg-emerald-900/60"
+                            title="Insertion Sort by lowest HP for medevac priority">📊 Triage Sort (T15)</button>
+                        <button onclick="runGameDijkstra()"
+                            class="py-2 px-2 rounded-lg border border-orange-500/40 bg-orange-950/40 text-orange-200 hover:bg-orange-900/60"
+                            title="Dijkstra shortest path to most critical soldier">🚁 Convoy Route (T17)</button>
+                    </div>
+
+                    <div
+                        class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 pt-1 border-t border-slate-800/80 text-xs">
+                        <div class="flex items-center gap-1.5 flex-1">
+                            <span class="text-[11px] text-amber-300 font-bold whitespace-nowrap">🌳 BST Soldier
+                                (T12):</span>
+                            <select id="bst-soldier-input"
+                                class="w-full max-w-[185px] rounded-lg border border-slate-700 bg-slate-950 px-2.5 py-1.5 text-white text-xs font-semibold"></select>
+                            <button onclick="runGameBSTSearch()"
+                                class="rounded-lg border border-amber-500/60 bg-amber-500/20 px-3 py-1.5 text-[11px] font-extrabold text-amber-200 hover:bg-amber-500/30 whitespace-nowrap">🔍
+                                Search Soldier</button>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <button onclick="triggerQueueDequeue()"
+                                class="rounded-lg border border-sky-500/40 bg-slate-900 px-2.5 py-1.5 text-[11px] font-bold text-sky-300 hover:bg-slate-800"
+                                title="Topic 5: Dequeue front mission order">📡 Dispatch Order (T5)</button>
+                            <button onclick="triggerStackUndo()"
+                                class="rounded-lg border border-rose-500/40 bg-slate-900 px-2.5 py-1.5 text-[11px] font-bold text-rose-300 hover:bg-slate-800"
+                                title="Topic 6: Pop last command from LIFO stack">↩️ Undo Command (T6)</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- =====================================================
+               TAB 2: PYTHON OOP CODE & INTEGRATED EXPLANATION
+               ===================================================== -->
+            <div id="view-code" class="tac-panel rounded-2xl p-5 flex flex-col gap-3.5 hidden">
+                <div class="flex items-start justify-between flex-wrap gap-2 border-b border-slate-800 pb-3">
+                    <div>
+                        <div class="flex items-center gap-2 flex-wrap mb-1">
+                            <span class="text-[10px] font-bold uppercase tracking-widest text-amber-400">🐍 Live Pyodide
+                                Python 3.12 Engine</span>
+                            <span id="code-pillar-badge" class="pillar-badge">OOP Pillar: Encapsulation</span>
+                        </div>
+                        <h2 id="code-topic-title" class="text-base md:text-lg font-extrabold text-white"></h2>
+                        <div id="code-class-pills" class="flex flex-wrap gap-1.5 mt-2"></div>
+                    </div>
+                    <button onclick="switchTab('explain')"
+                        class="text-xs px-3 py-1.5 rounded-xl bg-slate-800 border border-amber-500/40 text-amber-300 hover:bg-slate-700 font-bold">📖
+                        Deep-Dive OOP Explanation →</button>
+                </div>
+
+                <!-- Live Mini Barracks Sync Strip so players see Grid state while running Python code -->
+                <div id="mini-grid-strip" class="tac-subcard rounded-xl p-2.5 border border-amber-500/25 text-xs"></div>
+
+                <!-- Integrated Code Explanation Cards right above the Editor -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5 text-xs">
+                    <div class="tac-subcard rounded-xl p-3 border-l-4 border-l-amber-500">
+                        <div class="font-bold text-amber-300 mb-1">📘 OOP / DSA Concept in This Code</div>
+                        <p id="code-exp-concept" class="text-slate-300 leading-relaxed text-[11.5px]"></p>
+                    </div>
+                    <div class="tac-subcard rounded-xl p-3 border-l-4 border-l-emerald-500">
+                        <div class="font-bold text-emerald-300 mb-1">🎮 How This Code Powers "Training to War"</div>
+                        <p id="code-exp-game" class="text-slate-300 leading-relaxed text-[11.5px]"></p>
+                    </div>
+                </div>
+
+                <!-- Python Code Editor -->
+                <div>
+                    <div class="flex items-center justify-between text-[11px] text-slate-400 mb-1 px-1">
+                        <span class="code-font font-semibold text-amber-300">📄 editable_module.py</span>
+                        <button onclick="copyTopicCode()"
+                            class="text-[10.5px] px-2 py-0.5 rounded bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 font-semibold">📋
+                            Copy Code</button>
+                    </div>
+                    <textarea id="code-editor"
+                        class="w-full min-h-[260px] bg-[#070a10] border border-slate-700 rounded-xl p-4 code-font text-xs md:text-sm font-medium leading-relaxed text-emerald-100 focus:outline-none focus:border-amber-400"
+                        spellcheck="false"></textarea>
+                </div>
+
+                <div class="grid grid-cols-3 gap-2">
+                    <button id="run-btn" onclick="runPythonCode()"
+                        class="col-span-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 py-2.5 rounded-xl font-extrabold text-slate-950 text-xs md:text-sm flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20">
+                        ▶ Execute Python Code in Barracks Engine
+                    </button>
+                    <button onclick="loadTopic()"
+                        class="bg-slate-900 hover:bg-slate-800 border border-slate-700 py-2.5 rounded-xl font-bold text-slate-200 text-xs">↺
+                        Reset Default Code</button>
+                </div>
+
+                <div>
+                    <h3 class="text-xs font-bold text-amber-300 mb-1 flex items-center justify-between">
+                        <span>🖥️ Python Standard Output (<code>sys.stdout</code>)</span>
+                        <span class="text-[10px] code-font text-slate-400">Pyodide v0.26.1</span>
+                    </h3>
+                    <div id="output-console"
+                        class="bg-[#05080d] border border-slate-800 rounded-xl p-3.5 text-xs max-h-44 overflow-auto code-font whitespace-pre-wrap text-slate-100">
+                    </div>
+                </div>
+
+                <!-- Tree / BST SVG Visualizer -->
+                <div class="tac-subcard rounded-xl p-3.5">
+                    <div class="flex items-center justify-between flex-wrap gap-2 mb-2">
+                        <h3 class="text-xs font-bold text-amber-300">🌳 Rank Hierarchy & Soldier BST Visualizer <span
+                                id="tree-kind" class="text-[10px] font-normal text-slate-400"></span></h3>
+                        <button onclick="clearTraversal()"
+                            class="text-[10px] px-2 py-0.5 rounded border border-slate-700 text-slate-300 hover:bg-slate-800">Reset
+                            Nodes</button>
+                    </div>
+                    <svg id="tree-svg" viewBox="0 0 440 260" class="w-full h-auto" role="img"
+                        aria-label="Rank Promotion and Soldier BST"></svg>
+                    <div class="mt-2 text-[11px]">
+                        <div id="trav-title" class="font-bold text-amber-300">Execute a Tree/BST topic or click "Search
+                            Soldier" to animate nodes.</div>
+                        <div id="trav-order" class="code-font text-slate-200 mt-1 leading-relaxed"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- =====================================================
+               TAB 3: FULL OOP ARCHITECTURE & EXPLANATION GUIDE
+               ===================================================== -->
+            <div id="view-explain" class="tac-panel rounded-2xl p-5 flex flex-col gap-4 hidden">
+                <div class="flex items-start justify-between flex-wrap gap-2 border-b border-slate-800 pb-3">
+                    <div>
+                        <div class="flex items-center gap-2 flex-wrap mb-1">
+                            <span class="text-[10px] font-bold uppercase tracking-widest text-amber-400">📖 Detailed
+                                Python OOP & DSA Architecture</span>
+                            <span id="exp-pillar-badge" class="pillar-badge">OOP Pillar: Encapsulation</span>
+                        </div>
+                        <h2 id="exp-title" class="text-lg font-extrabold text-white"></h2>
+                        <div id="exp-class-pills" class="flex flex-wrap gap-1.5 mt-2"></div>
+                    </div>
+                    <button onclick="switchTab('code')"
+                        class="text-xs px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold">🐍
+                        Open Live Code Editor →</button>
+                </div>
+
+                <!-- 4 CORE OOP PILLARS IN "TRAINING TO WAR" -->
+                <div class="tac-subcard rounded-xl p-3.5 border border-amber-500/25">
+                    <div class="text-xs font-extrabold text-amber-300 uppercase tracking-wider mb-2.5">🏛️ The 4 Pillars
+                        of Object-Oriented Programming in "Training to War"</div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
+                        <div class="bg-slate-950/90 p-2.5 rounded-lg border border-slate-800">
+                            <div class="font-bold text-amber-300 mb-0.5">1. Encapsulation (Data Bundling)</div>
+                            <p class="text-slate-300 text-[11px] leading-relaxed"><code>class Soldier</code> bundles
+                                <code>self.health</code>, <code>self.stamina</code>, and <code>self.rank</code> with
+                                guarded methods (<code>issue_rations()</code>, <code>apply_medkit()</code>), while
+                                <code>BaseEconomy</code> protects War Funds.
+                            </p>
+                        </div>
+                        <div class="bg-slate-950/90 p-2.5 rounded-lg border border-slate-800">
+                            <div class="font-bold text-emerald-300 mb-0.5">2. Inheritance (15 Subclasses)</div>
+                            <p class="text-slate-300 text-[11px] leading-relaxed">All 15 units
+                                (<code>InfantryRifleman</code>, <code>ReconSniper</code>, <code>FieldMedic</code>,
+                                <code>TierOneCommando</code>, etc.) inherit core attributes and methods from base
+                                <code>class Soldier</code>.
+                            </p>
+                        </div>
+                        <div class="bg-slate-950/90 p-2.5 rounded-lg border border-slate-800">
+                            <div class="font-bold text-sky-300 mb-0.5">3. Polymorphism (Specialized Behavior)</div>
+                            <p class="text-slate-300 text-[11px] leading-relaxed">Each subclass customizes combat
+                                behavior—e.g., <code>Combat Medic</code> regenerates HP faster, <code>Sniper</code>
+                                gains bonus Drill XP, and <code>Heavy Gunner</code> mitigates injury damage.</p>
+                        </div>
+                        <div class="bg-slate-950/90 p-2.5 rounded-lg border border-slate-800">
+                            <div class="font-bold text-rose-300 mb-0.5">4. Abstraction (Clean Interfaces)</div>
+                            <p class="text-slate-300 text-[11px] leading-relaxed">High-level controllers like
+                                <code>BarracksDispatcher</code>, <code>MissionDispatchQueue</code>, and
+                                <code>CommandStack</code> hide 2D matrix math and pointer manipulation behind simple
+                                method calls.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Concept & Live Game Connection -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                    <div class="tac-subcard rounded-xl p-4 border-l-4 border-l-amber-500">
+                        <div class="font-bold text-amber-300 mb-1.5 text-sm">📘 Core OOP / Data Structure Concept</div>
+                        <p id="exp-concept" class="text-slate-200 leading-relaxed"></p>
+                    </div>
+                    <div class="tac-subcard rounded-xl p-4 border-l-4 border-l-emerald-500">
+                        <div class="font-bold text-emerald-300 mb-1.5 text-sm">🎮 Live Implementation in "Training to
+                            War"</div>
+                        <p id="exp-game" class="text-slate-200 leading-relaxed"></p>
+                    </div>
+                </div>
+
+                <!-- Class, Method & Line-by-Line Architecture -->
+                <div class="tac-subcard rounded-xl p-4 text-xs space-y-2 border-l-4 border-l-sky-500">
+                    <div class="font-bold text-sky-300 text-sm">🏗️ Class, Method & Line-by-Line Architecture</div>
+                    <div id="exp-architecture" class="text-slate-200 leading-relaxed space-y-1.5"></div>
+                </div>
+
+                <!-- Step-by-Step Execution Walkthrough -->
+                <div class="tac-subcard rounded-xl p-4 text-xs space-y-2 border-l-4 border-l-purple-500">
+                    <div class="font-bold text-purple-300 text-sm">👣 Step-by-Step Execution Walkthrough</div>
+                    <div id="exp-steps" class="space-y-1.5"></div>
+                </div>
+
+                <!-- Time & Space Complexity + Run Button -->
+                <div
+                    class="tac-subcard rounded-xl p-4 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-l-4 border-l-rose-500">
+                    <div>
+                        <span class="font-bold text-rose-300">⚡ Time & Space Complexity:</span>
+                        <span id="exp-complexity" class="text-slate-100 ml-1 code-font"></span>
+                    </div>
+                    <button onclick="switchTab('code'); runPythonCode();"
+                        class="px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold whitespace-nowrap shadow">▶
+                        Run This Topic in Code Tab</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- RIGHT COLUMN: RADAR TELEMETRY + FIFO MISSION QUEUE + LIFO COMMAND STACK -->
+        <section class="lg:col-span-3 flex flex-col gap-4">
+            <!-- Tactical Algorithm Telemetry -->
+            <div class="tac-panel rounded-2xl p-4">
+                <h3
+                    class="font-bold text-white mb-2 text-sm flex items-center justify-between border-b border-slate-800 pb-2">
+                    <span>🧭 Tactical Radar Telemetry</span>
+                    <span class="text-[10px] code-font text-emerald-400">DSA Live</span>
+                </h3>
+                <div class="text-xs space-y-1.5 code-font">
+                    <div>ENGINE: <b id="tv-algo" class="text-amber-300">idle</b> <span id="tv-state"
+                            class="text-emerald-300"></span></div>
+                    <div>ACTIVE SECTOR: <b id="tv-current">-</b></div>
+                    <div><span id="tv-struct-label">FRONTIER</span>:
+                        <div id="tv-struct" class="mt-0.5">-</div>
+                    </div>
+                    <div>VISITED:
+                        <div id="tv-visited" class="mt-0.5">-</div>
+                    </div>
+                    <div>PATH ORDER:
+                        <div id="tv-order" class="text-slate-300 mt-0.5">-</div>
+                    </div>
+                    <div>🎯 TARGETS:
+                        <div id="tv-found" class="mt-0.5">-</div>
+                    </div>
+                    <div id="tv-msg" class="text-amber-300 leading-relaxed pt-1 font-sans font-semibold"></div>
+                </div>
+            </div>
+
+            <!-- Mission Dispatch Queue (FIFO) -->
+            <div class="tac-panel rounded-2xl p-4">
+                <h3 class="font-bold text-white mb-2 flex items-center gap-2 text-sm border-b border-slate-800 pb-2">
+                    <span>📡 Mission Queue (FIFO)</span>
+                    <span id="climate-countdown" class="ml-auto text-[10px] font-bold text-amber-300 code-font"></span>
+                </h3>
+                <div id="climate-queue" class="space-y-2 text-xs"></div>
+            </div>
+
+            <!-- Command History Stack (LIFO) -->
+            <div class="tac-panel rounded-2xl p-4 flex-1 flex flex-col">
+                <div class="flex items-center justify-between mb-2 border-b border-slate-800 pb-2">
+                    <h3 class="font-bold text-white flex items-center gap-2 text-sm">
+                        <span>🗂️ Command Stack (LIFO)</span>
+                    </h3>
+                    <button onclick="triggerStackUndo()"
+                        class="text-[10px] px-2 py-0.5 rounded bg-rose-950/80 border border-rose-500/50 text-rose-200 hover:bg-rose-900 font-bold">↩️
+                        pop()</button>
+                </div>
+                <div id="action-stack" class="flex-1 space-y-1.5 text-xs overflow-auto max-h-64"></div>
+            </div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
